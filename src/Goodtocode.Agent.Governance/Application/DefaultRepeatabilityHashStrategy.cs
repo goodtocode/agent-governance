@@ -5,16 +5,24 @@ using System.Text.Json;
 namespace Goodtocode.Agent.Governance.Application;
 
 /// <summary>
-/// Deterministic SHA-256 hashing routines for repeatability.
+/// Default deterministic SHA-256 hashing strategy for repeatability.
 /// </summary>
-internal static class RepeatabilityHashService
+/// <remarks>
+/// This is the built-in <see cref="IRepeatabilityHashStrategy"/> used automatically when no custom
+/// strategy is supplied. Most consumers never need to reference this type directly; supply a custom
+/// <see cref="IRepeatabilityHashStrategy"/> to <see cref="GovernanceEnforcer"/> only if a different
+/// hashing algorithm is required.
+/// </remarks>
+public sealed class DefaultRepeatabilityHashStrategy : IRepeatabilityHashStrategy
 {
-    public static string ComputePromptHash(string promptContent)
+    /// <inheritdoc />
+    public string ComputePromptHash(string promptContent)
     {
         return ComputeSha256(promptContent ?? string.Empty);
     }
 
-    public static string ComputeInputHash(IReadOnlyDictionary<string, object?> inputs)
+    /// <inheritdoc />
+    public string ComputeInputHash(IReadOnlyDictionary<string, object?> inputs)
     {
         ArgumentNullException.ThrowIfNull(inputs);
 
