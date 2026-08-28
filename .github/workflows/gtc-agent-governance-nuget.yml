@@ -62,7 +62,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: dotnet version ${{ matrix.DOTNET_VERSION }}
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ matrix.DOTNET_VERSION }}
 
