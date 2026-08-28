@@ -219,6 +219,21 @@ var governed = enforcer.Enforce(request);
 - `governed.PromptHash` as read-only computed repeatability prompt hash
 - `governed.InputHash` as read-only computed repeatability input hash
 
+`PromptHash` and `InputHash` are **always** computed from `RepeatabilityPromptContent` and
+`RepeatabilityInputs`, unconditionally, on every call to `Enforce` — including when those raw values
+are empty (for example, a workflow with zero inputs). You never set these hashes yourself, and the
+enforcer never skips hashing based on emptiness. This keeps hashing closed for modification.
+
+The hashing *algorithm* itself is open for extension. `GovernanceEnforcer` accepts an optional
+`IRepeatabilityHashStrategy`; if you don't supply one, the built-in SHA-256/canonical-JSON
+`DefaultRepeatabilityHashStrategy` is used automatically:
+
+```csharp
+var enforcer = new GovernanceEnforcer(
+    new EvaluationGovernancePromptComposer(),
+    hashStrategy: new MyCustomHashStrategy()); // optional — omit to use the default
+```
+
 ---
 
 ## 6) Send governed prompt context to your AI runtime
@@ -362,3 +377,41 @@ var enforcer = new GovernanceEnforcer(composer);
 - Extension directives are appended in deterministic order (`Order`, then `ExtensionId`).
 - Extension provenance is included in metadata (for example `governance.extensions.applied`).
 - If an extension tries to weaken governance, enforcement fails with `GovernanceValidationException`.
+
+---
+
+## 11) Extending with `IRepeatabilityHashStrategy`
+
+**Intent**  
+Swap the repeatability hashing algorithm without changing when or whether hashing happens.
+
+**Why**  
+Most consumers never touch this — raw prompt/input values are always hashed automatically by the
+built-in SHA-256/canonical-JSON strategy. Supply a custom strategy only if you need a different
+algorithm (for example, to match an existing hash format already stored in your system).
+
+**Code**
+
+```csharp
+using Goodtocode.Agent.Governance.Application;
+
+public sealed class MyCustomHashStrategy : IRepeatabilityHashStrategy
+{
+    public string ComputePromptHash(string promptContent) =>
+        Convert.ToHexString(System.Security.Cryptography.SHA512.HashData(
+            System.Text.Encoding.UTF8.GetBytes(promptContent)));
+
+    public string ComputeInputHash(IReadOnlyDictionary<string, object?> inputs) =>
+        Convert.ToHexString(System.Security.Cryptography.SHA512.HashData(
+            System.Text.Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(inputs))));
+}
+
+var enforcer = new GovernanceEnforcer(
+    new EvaluationGovernancePromptComposer(),
+    hashStrategy: new MyCustomHashStrategy());
+```
+
+**Expected behavior**  
+- Hashing still runs unconditionally on every `Enforce` call; only the algorithm changes.
+- `PromptHash`/`InputHash` are never settable directly by consumers, regardless of strategy.
+- Omitting `hashStrategy` uses `DefaultRepeatabilityHashStrategy` automatically — no setup required.

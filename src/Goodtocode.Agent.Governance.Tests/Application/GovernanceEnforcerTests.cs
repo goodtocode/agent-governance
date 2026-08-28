@@ -129,4 +129,122 @@ public sealed class GovernanceEnforcerTests
         Assert.AreEqual(firstResult.InputHash, secondResult.InputHash);
         Assert.AreEqual(firstResult.PromptHash, secondResult.PromptHash);
     }
+
+    [TestMethod]
+    public void EnforceWithEmptyRawInputsStillComputesNonEmptyInputHash()
+    {
+        // Arrange
+        // Regression test: a workflow with zero inputs (e.g. an input-less playbook) must not be
+        // treated the same as "no raw source provided". Hashing must always run unconditionally.
+        var enforcer = new GovernanceEnforcer(new EvaluationGovernancePromptComposer());
+        var request = new GovernanceEvaluationRequest
+        {
+            Governance = TestDataFactory.CreateValidGovernanceRecord() with
+            {
+                Repeatability = TestDataFactory.CreateValidGovernanceRecord().Repeatability with
+                {
+                    PromptHash = string.Empty,
+                    InputHash = string.Empty
+                }
+            },
+            RepeatabilityPromptContent = "workflow-json-content",
+            RepeatabilityInputs = new Dictionary<string, object?>()
+        };
+
+        // Act
+        var result = enforcer.Enforce(request);
+
+        // Assert
+        Assert.IsNotEmpty(result.InputHash);
+        Assert.IsNotEmpty(result.PromptHash);
+    }
+
+    [TestMethod]
+    public void EnforceWithEmptyRawPromptContentStillComputesNonEmptyPromptHash()
+    {
+        // Arrange
+        var enforcer = new GovernanceEnforcer(new EvaluationGovernancePromptComposer());
+        var request = new GovernanceEvaluationRequest
+        {
+            Governance = TestDataFactory.CreateValidGovernanceRecord() with
+            {
+                Repeatability = TestDataFactory.CreateValidGovernanceRecord().Repeatability with
+                {
+                    PromptHash = string.Empty,
+                    InputHash = string.Empty
+                }
+            },
+            RepeatabilityPromptContent = string.Empty,
+            RepeatabilityInputs = new Dictionary<string, object?> { ["a"] = 1 }
+        };
+
+        // Act
+        var result = enforcer.Enforce(request);
+
+        // Assert
+        Assert.IsNotEmpty(result.PromptHash);
+        Assert.IsNotEmpty(result.InputHash);
+    }
+
+    [TestMethod]
+    public void EnforceWithNullRawPromptContentAndDefaultInputsStillProducesValidHashes()
+    {
+        // Arrange
+        // Regression test mirroring the exact Cannery scenario: RepeatabilityPromptContent left null
+        // and RepeatabilityInputs left at its default empty dictionary (no raw sources supplied at all).
+        var enforcer = new GovernanceEnforcer(new EvaluationGovernancePromptComposer());
+        var request = new GovernanceEvaluationRequest
+        {
+            Governance = TestDataFactory.CreateValidGovernanceRecord() with
+            {
+                Repeatability = TestDataFactory.CreateValidGovernanceRecord().Repeatability with
+                {
+                    PromptHash = string.Empty,
+                    InputHash = string.Empty
+                }
+            }
+        };
+
+        // Act
+        var result = enforcer.Enforce(request);
+
+        // Assert
+        Assert.IsNotEmpty(result.PromptHash);
+        Assert.IsNotEmpty(result.InputHash);
+    }
+
+    [TestMethod]
+    public void EnforceWithCustomHashStrategyUsesSuppliedStrategy()
+    {
+        // Arrange
+        var strategy = new StubHashStrategy();
+        var enforcer = new GovernanceEnforcer(new EvaluationGovernancePromptComposer(), strategy);
+        var request = new GovernanceEvaluationRequest
+        {
+            Governance = TestDataFactory.CreateValidGovernanceRecord() with
+            {
+                Repeatability = TestDataFactory.CreateValidGovernanceRecord().Repeatability with
+                {
+                    PromptHash = string.Empty,
+                    InputHash = string.Empty
+                }
+            },
+            RepeatabilityPromptContent = "custom-strategy-prompt",
+            RepeatabilityInputs = new Dictionary<string, object?> { ["a"] = 1 }
+        };
+
+        // Act
+        var result = enforcer.Enforce(request);
+
+        // Assert
+        Assert.AreEqual("stub-prompt-hash", result.PromptHash);
+        Assert.AreEqual("stub-input-hash", result.InputHash);
+    }
+
+    private sealed class StubHashStrategy : IRepeatabilityHashStrategy
+    {
+        public string ComputePromptHash(string promptContent) => "stub-prompt-hash";
+
+        public string ComputeInputHash(IReadOnlyDictionary<string, object?> inputs) => "stub-input-hash";
+    }
 }
