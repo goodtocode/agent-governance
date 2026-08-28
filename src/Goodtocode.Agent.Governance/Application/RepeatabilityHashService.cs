@@ -1,0 +1,69 @@
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+
+namespace Goodtocode.Agent.Governance.Application;
+
+/// <summary>
+/// Deterministic SHA-256 hashing routines for repeatability.
+/// </summary>
+internal static class RepeatabilityHashService
+{
+    public static string ComputePromptHash(string promptContent)
+    {
+        return ComputeSha256(promptContent ?? string.Empty);
+    }
+
+    public static string ComputeInputHash(IReadOnlyDictionary<string, object?> inputs)
+    {
+        ArgumentNullException.ThrowIfNull(inputs);
+
+        var normalizedPairs = inputs
+            .OrderBy(x => x.Key, StringComparer.Ordinal)
+            .Select(x => new KeyValuePair<string, string>(x.Key, Canonicalize(x.Value)))
+            .ToArray();
+
+        var normalizedJson = JsonSerializer.Serialize(normalizedPairs);
+        return ComputeSha256(normalizedJson);
+    }
+
+    private static string Canonicalize(object? value)
+    {
+        var json = JsonSerializer.Serialize(value);
+        using var doc = JsonDocument.Parse(json);
+        return CanonicalizeElement(doc.RootElement);
+    }
+
+    private static string CanonicalizeElement(JsonElement element)
+    {
+        return element.ValueKind switch
+        {
+            JsonValueKind.Object => CanonicalizeObject(element),
+            JsonValueKind.Array => CanonicalizeArray(element),
+            _ => element.GetRawText()
+        };
+    }
+
+    private static string CanonicalizeObject(JsonElement element)
+    {
+        var properties = element.EnumerateObject()
+            .OrderBy(p => p.Name, StringComparer.Ordinal)
+            .Select(p => $"\"{JsonEncodedText.Encode(p.Name)}\":{CanonicalizeElement(p.Value)}");
+
+        return $"{{{string.Join(",", properties)}}}";
+    }
+
+    private static string CanonicalizeArray(JsonElement element)
+    {
+        var items = element.EnumerateArray()
+            .Select(CanonicalizeElement);
+
+        return $"[{string.Join(",", items)}]";
+    }
+
+    private static string ComputeSha256(string value)
+    {
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(value));
+        return Convert.ToHexString(hash);
+    }
+}

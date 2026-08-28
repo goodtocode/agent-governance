@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Goodtocode.Agent.Governance.Tests</RootNamespace>
+    <AssemblyName>Goodtocode.Agent.Governance.Tests</AssemblyName>
+    <TargetFramework>net10.0</TargetFramework>
+    <Version>0.1.0</Version>
+    <IsPackable>false</IsPackable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest" Version="4.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Goodtocode.Agent.Governance\Goodtocode.Agent.Governance.csproj" />
+  </ItemGroup>
+
+</Project>
