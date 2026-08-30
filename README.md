@@ -1,4 +1,4 @@
-# Goodtocode.Agent.Governance Quick Start
+# Goodtocode.Agents.Governance Quick Start
 
 Use this package in any inference-driven workflow (Microsoft.Extensions.AI, Microsoft Agent Framework, or Semantic Kernel) to add consistent governance for:
 
@@ -11,13 +11,13 @@ Use this package in any inference-driven workflow (Microsoft.Extensions.AI, Micr
 
 ## 1) Install package
 ```powershell
-dotnet add package Goodtocode.Agent.Governance
+dotnet add package Goodtocode.Agents.Governance
 ```
 
 Or pin a version:
 
 ```powershell
-dotnet add package Goodtocode.Agent.Governance --version <latest-version>
+dotnet add package Goodtocode.Agents.Governance --version <latest-version>
 ```
 ---
 
@@ -25,8 +25,8 @@ dotnet add package Goodtocode.Agent.Governance --version <latest-version>
 These namespaces contain the core contracts (`EvaluationGovernanceRecord`) and execution entrypoint (`GovernanceEnforcer`).
 
 ```csharp
-using Goodtocode.Agent.Governance.Application;
-using Goodtocode.Agent.Governance.Domain;
+using Goodtocode.Agents.Governance.Application;
+using Goodtocode.Agents.Governance.Domain;
 ```
 
 ---
@@ -338,7 +338,7 @@ Core governance stays mandatory and unchanged, while extension logic remains opt
 **Code**
 
 ```csharp
-using Goodtocode.Agent.Governance.Application;
+using Goodtocode.Agents.Governance.Application;
 
 public sealed class FinanceGovernanceExtension : IGovernanceDirectiveExtension
 {
@@ -393,7 +393,7 @@ algorithm (for example, to match an existing hash format already stored in your 
 **Code**
 
 ```csharp
-using Goodtocode.Agent.Governance.Application;
+using Goodtocode.Agents.Governance.Application;
 
 public sealed class MyCustomHashStrategy : IRepeatabilityHashStrategy
 {

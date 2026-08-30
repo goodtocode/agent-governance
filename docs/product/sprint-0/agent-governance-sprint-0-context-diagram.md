@@ -1,7 +1,7 @@
 # Agent Governance - Sprint 0 Context Diagram
 
 ## Sprint 0 Outcome
-Sprint 0 completed event storming and produced the context diagram for Goodtocode.Agent.Governance in AI inference workflows.
+Sprint 0 completed event storming and produced the context diagram for Goodtocode.Agents.Governance in AI inference workflows.
 
 ## Context Boundary
 The library is an enforcement boundary between caller orchestration and downstream model inference.

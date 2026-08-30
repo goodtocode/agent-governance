@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/Goodtocode.Agents.Governance.Tests/Goodtocode.Agents.Governance.Tests.csproj" />
+  <Project Path="src/Goodtocode.Agents.Governance/Goodtocode.Agents.Governance.csproj" />
+</Solution>
