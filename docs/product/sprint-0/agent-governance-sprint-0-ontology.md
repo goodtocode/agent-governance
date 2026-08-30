@@ -1,7 +1,7 @@
 # Agent Governance - Sprint 0 Ontology
 
 ## Sprint 0 Outcome
-Sprint 0 completed ontology discovery and normalization for the Goodtocode.Agent.Governance domain. The team aligned on shared language mapped to the current library API surface.
+Sprint 0 completed ontology discovery and normalization for the Goodtocode.Agents.Governance domain. The team aligned on shared language mapped to the current library API surface.
 
 ## Purpose
 Define canonical terms for governance enforcement across AI inference workflows to reduce ambiguity in code, docs, tests, and product planning.
@@ -36,5 +36,5 @@ Governance, Policy Profile, Directive, Evidence Reference, Justification Referen
 5. Governed output validation is part of the product contract.
 
 ## Traceability
-Canonical terms map to src/Goodtocode.Agent.Governance/Application/* and src/Goodtocode.Agent.Governance/Domain/*.
+Canonical terms map to src/Goodtocode.Agents.Governance/Application/* and src/Goodtocode.Agents.Governance/Domain/*.
 This document is the ontology baseline for Sprint 1+.

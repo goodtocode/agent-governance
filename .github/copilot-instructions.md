@@ -1,12 +1,12 @@
-# Copilot Instructions for Goodtocode.Agent.Governance
+# Copilot Instructions for Goodtocode.Agents.Governance
 
 ## Project Overview
-Goodtocode.Agent.Governance is a .NET governance library for AI inference workflows. It provides deterministic governance enforcement across observability, repeatability, auditability, and defensibility.
+Goodtocode.Agents.Governance is a .NET governance library for AI inference workflows. It provides deterministic governance enforcement across observability, repeatability, auditability, and defensibility.
 
 ## Repository Shape
-- Solution: Goodtocode.Agent.Governance.slnx
-- Library: src/Goodtocode.Agent.Governance
-- Tests: src/Goodtocode.Agent.Governance.Tests
+- Solution: Goodtocode.Agents.Governance.slnx
+- Library: src/Goodtocode.Agents.Governance
+- Tests: src/Goodtocode.Agents.Governance.Tests
 - Product docs: docs/product/**
 - Governance docs: docs/governance/**
 - Automation: .github/workflows/** and .github/scripts/**
@@ -20,7 +20,7 @@ Goodtocode.Agent.Governance is a .NET governance library for AI inference workfl
 
 ## Testing Expectations
 - Build the solution after code changes.
-- Run relevant tests in Goodtocode.Agent.Governance.Tests.
+- Run relevant tests in Goodtocode.Agents.Governance.Tests.
 - For workflow/script updates, validate referenced paths and commands against this repo layout.
 
 ## Documentation Expectations

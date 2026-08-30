@@ -4,11 +4,11 @@
 This file defines repository-specific operating rules for AI agents working in goodtocode/agent-governance.
 
 ## Repository Scope
-- Primary deliverable: reusable .NET library package Goodtocode.Agent.Governance.
-- Current solution: Goodtocode.Agent.Governance.slnx.
+- Primary deliverable: reusable .NET library package Goodtocode.Agents.Governance.
+- Current solution: Goodtocode.Agents.Governance.slnx.
 - Main projects:
-  - src/Goodtocode.Agent.Governance/ (library)
-  - src/Goodtocode.Agent.Governance.Tests/ (tests)
+  - src/Goodtocode.Agents.Governance/ (library)
+  - src/Goodtocode.Agents.Governance.Tests/ (tests)
 
 ## Required Reading Order
 1. .github/copilot-instructions.md
